@@ -10,17 +10,24 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       strategies: 'generateSW',
-      includeAssets: ['favicon.ico', 'robots.txt', 'offline.html', 'logo.png'],
+      // Explicitly includes the offline page and standard assets
+      includeAssets: ['favicon.ico', 'robots.txt', 'offline.html', 'logo.png'], 
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        // Caches common assets (js, css, html, images)
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'], 
         navigateFallback: '/offline.html',
+        // --- REMOVED: navigateFallbackDeny property to fix the build error. ---
         runtimeCaching: [
           {
+            // Caches specific API calls (e.g., Supabase or GraphQL)
             urlPattern: /^https:\/\/.*\.(json|graphql)/,
             handler: 'NetworkFirst',
             options: { 
               cacheName: 'api-cache',
-              expiration: { maxEntries: 50, maxAgeSeconds: 86400 } // 1 day
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 // 1 day
+              }
             }
           }
         ]
@@ -33,20 +40,18 @@ export default defineConfig({
         theme_color: '#ffffff',
         background_color: '#ffffff',
         icons: [
-          { src: '/logo.png', sizes: '192x192', type: 'image/png' },
-          { src: '/logo.png', sizes: '512x512', type: 'image/png' }
+          {
+            src: '/logo.png', 
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: '/logo.png',
+            sizes: '512x512',
+            type: 'image/png'
+          }
         ]
       }
-    })
+    }),
   ],
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) return 'vendor'
-        }
-      }
-    },
-    chunkSizeWarningLimit: 600
-  }
 })
