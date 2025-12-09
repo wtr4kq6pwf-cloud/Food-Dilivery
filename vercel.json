@@ -1,4 +1,3 @@
-
 {
   "buildCommand": "npm run build",
   "outputDirectory": "build",
@@ -17,7 +16,7 @@
       ]
     },
     {
-      "source": "/workbox-*.js",
+      "source": "/workbox-(.*).js",
       "headers": [
         {
           "key": "Cache-Control",
